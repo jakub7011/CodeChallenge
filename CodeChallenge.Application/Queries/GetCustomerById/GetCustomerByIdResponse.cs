@@ -5,14 +5,16 @@ namespace CodeChallenge.Application.Queries.GetCustomerById
 {
     public class GetCustomerByIdResponse
     {
-        public Customer Customer { get; set; }
+        public Customer Customer { get; private set; }
 
-        public string ErrorMessage { get; set; }
+        public string ErrorMessage { get; private set; }
 
-        public StatusCode StatusCode { get; set; }
+        public StatusCode StatusCode { get; private set; }
 
-        public GetCustomerByIdResponse()
+        public GetCustomerByIdResponse(string errorMessage, StatusCode statusCode)
         {
+            ErrorMessage = errorMessage;
+            StatusCode = statusCode;
         }
 
         public GetCustomerByIdResponse(Customer customer)

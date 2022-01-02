@@ -15,44 +15,32 @@ namespace CodeChallenge.Application.Services
         private readonly CodeChallengeDbContext dbContext;
         private readonly CodeChallengeMemoryCache memoryCache;
 
+        private readonly object cacheLock = new object();
+
         public CustomerService(CodeChallengeDbContext dbContext, CodeChallengeMemoryCache memoryCache)
         {
             this.dbContext = dbContext;
             this.memoryCache = memoryCache;
         }
 
-        // TODO: Reimplement using Linq
         public Customer GetCustomerById(long id)
         {
             var customers = GetAllCustomers();
 
-            foreach (var customer in customers)
-            {
-                if (customer.Id == id)
-                {
-                    return customer;
-                }
-            }
-
-            return null;
+            return customers.FirstOrDefault(x => x.Id == id);
         }
 
-        // TODO: Reimplement using iterator blocks
         public IEnumerable<Customer> GetCustomersByName(string name)
         {
-            var result = new List<Customer>();
-
             var customers = GetAllCustomers();
 
             foreach (var customer in customers)
             {
                 if (customer.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    result.Add(customer);
+                    yield return customer;
                 }
             }
-
-            return result;
         }
 
         public IEnumerable<Customer> GetAllCustomers()
@@ -69,13 +57,16 @@ namespace CodeChallenge.Application.Services
 
         public Customer SaveCustomer(Customer customer)
         {
-            var customers = GetAllCustomers();
-            if (!customers.Any(x => x.Id == customer.Id))
+            lock (cacheLock)
             {
-                dbContext.Customers.Add(customer);
-                dbContext.SaveChanges();
+                var customers = GetAllCustomers();
+                if (!customers.Any(x => x.Id == customer.Id))
+                {
+                    dbContext.Customers.Add(customer);
+                    dbContext.SaveChanges();
 
-                UpdateCustomersCache(customer);
+                    UpdateCustomersCache(customer);
+                }
             }
 
             return customer;

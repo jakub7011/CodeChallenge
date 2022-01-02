@@ -31,11 +31,7 @@ namespace CodeChallenge.Application.Queries.GetCustomersByName
             }
             catch (Exception ex)
             {
-                return new GetCustomersByNameResponse
-                {
-                    ErrorMessage = ex.Message,
-                    StatusCode = StatusCode.InternalServerError
-                };
+                return new GetCustomersByNameResponse(ex.Message, StatusCode.InternalServerError);
             }
         }
     }

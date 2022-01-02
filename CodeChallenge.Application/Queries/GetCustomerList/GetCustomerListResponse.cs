@@ -6,14 +6,16 @@ namespace CodeChallenge.Application.Queries.GetCustomerList
 {
     public class GetCustomerListResponse
     {
-        public List<Customer> Customers { get; set; }
+        public List<Customer> Customers { get; private set; }
 
-        public string ErrorMessage { get; set; }
+        public string ErrorMessage { get; private set; }
 
-        public StatusCode StatusCode { get; set; }
+        public StatusCode StatusCode { get; private set; }
 
-        public GetCustomerListResponse()
+        public GetCustomerListResponse(string errorMessage, StatusCode statusCode)
         {
+            ErrorMessage = errorMessage;
+            StatusCode = statusCode;
         }
 
         public GetCustomerListResponse(List<Customer> customers)

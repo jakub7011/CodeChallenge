@@ -28,11 +28,7 @@ namespace CodeChallenge.Application.Queries.GetCustomerById
             }
             catch (Exception ex)
             {
-                return new GetCustomerByIdResponse
-                {
-                    ErrorMessage = ex.Message,
-                    StatusCode = StatusCode.InternalServerError
-                };
+                return new GetCustomerByIdResponse(ex.Message, StatusCode.InternalServerError);
             }
         }
     }
